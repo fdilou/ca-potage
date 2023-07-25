@@ -24,16 +24,14 @@ class Avis
     #[ORM\Column]
     private ?\DateTimeImmutable $date = null;
 
-    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: self::class)]
-    private Collection $produit;
-
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: self::class)]
-    private Collection $avis;
+    #[ORM\OneToMany(mappedBy: 'avis', targetEntity: User::class)]
+    private Collection $user;
 
     public function __construct()
     {
-        $this->produit = new ArrayCollection();
-        $this->avis = new ArrayCollection();
+        // $this->produit = new ArrayCollection();
+        // $this->avis = new ArrayCollection();
+        $this->user = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,63 +75,36 @@ class Avis
         return $this;
     }
 
+
     /**
-     * @return Collection<int, Avis>
+     * @return Collection<int, User>
      */
-    public function getProduit(): Collection
+    public function getUser(): Collection
     {
-        return $this->produit;
+        return $this->user;
     }
 
-    public function addProduit(self $produit): static
+    public function addUser(User $user): static
     {
-        if (!$this->produit->contains($produit)) {
-            $this->produit->add($produit);
-            $produit->setUtilisateur($this);
+        if (!$this->user->contains($user)) {
+            $this->user->add($user);
+            $user->setAvis($this);
         }
 
         return $this;
     }
 
-    public function removeProduit(self $produit): static
+    public function removeUser(User $user): static
     {
-        if ($this->produit->removeElement($produit)) {
+        if ($this->user->removeElement($user)) {
             // set the owning side to null (unless already changed)
-            if ($produit->getUtilisateur() === $this) {
-                $produit->setUtilisateur(null);
+            if ($user->getAvis() === $this) {
+                $user->setAvis(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Avis>
-     */
-    public function getAvis(): Collection
-    {
-        return $this->avis;
-    }
 
-    public function addAvi(self $avi): static
-    {
-        if (!$this->avis->contains($avi)) {
-            $this->avis->add($avi);
-            $avi->setProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAvi(self $avi): static
-    {
-        if ($this->avis->removeElement($avi)) {
-            // set the owning side to null (unless already changed)
-            if ($avi->getProduit() === $this) {
-                $avi->setProduit(null);
-            }
-        }
-
-        return $this;
-    }
 }
